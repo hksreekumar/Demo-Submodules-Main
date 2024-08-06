@@ -1,0 +1,3 @@
+[submodule "modules/Demo-Submodules-ModA"]
+	path = modules/Demo-Submodules-ModA
+	url = https://github.com/hksreekumar/Demo-Submodules-ModA.git

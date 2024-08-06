@@ -7,11 +7,40 @@ project(MyMainProject)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_subdirectory(modules/Demo-Submodules-ModA)  # Adding submodule
+# pull from git
+OPTION(LINK_SUBMODULE_A "Submodule A" ON)
 
-MESSAGE("INCLUDE DIRS: ${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA/src")
+find_package(Git QUIET)
+IF(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+    MESSAGE("Can download from Git")
+    IF(LINK_SUBMODULE_A)
+        if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA")
+            MESSAGE("UPDATING submodules")
+            EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                            RESULT_VARIABLE result)
+        ENDIF()
 
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA/src")
+        if(result)
+            message("Failed to get submodule: ${result}. Will continue without submodules")
+            SET(LINK_SUBMODULE_A OFF)
+        endif()
+    ENDIF()
+endif()
+
+if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA/src")
+    MESSAGE("Did not find Submodule A. Turning off")
+    SET(LINK_SUBMODULE_A OFF)
+endif()
+
+# building
+IF(LINK_SUBMODULE_A)
+    add_subdirectory(modules/Demo-Submodules-ModA)  # Adding submodule
+    MESSAGE("INCLUDE DIRS: ${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA/src")
+    include_directories("${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA/src")
+ELSE()
+    MESSAGE("SKIPPING")
+ENDIF()
 
 add_executable(MyMainProject src/main.cpp)
 target_link_libraries(MyMainProject MySubmoduleProject)

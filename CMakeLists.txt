@@ -14,7 +14,7 @@ find_package(Git QUIET)
 IF(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     MESSAGE("Can download from Git")
     IF(LINK_SUBMODULE_A)
-        if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-ModA")
+        if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/modules/Demo-Submodules-Mod/src")
             MESSAGE("UPDATING submodules")
             EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
                             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

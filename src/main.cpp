@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <function.h>
+#include <Demo-Submodules-ModA/function.h>
 
 int main() {
     std::cout << "> Hello from main module!\n";
